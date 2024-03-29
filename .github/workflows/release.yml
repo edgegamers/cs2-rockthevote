@@ -1,54 +1,70 @@
-name: dotnet package
+name: .NET Build and Release
+
 on:
-    push:
-      tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  push:
+    branches:
+      - main
+      - master
+      - dev
+  pull_request:
+    branches:
+      - main
+      - master
+      - dev
+
 jobs:
   build:
-    env:
-        dllName: RockTheVote
-        debugPath: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/bin/Debug
-
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: [ '8.0.x' ]
+
+    container:
+      image: mcr.microsoft.com/dotnet/nightly/sdk:8.0
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Install dependencies
-      run: dotnet restore        
+      - name: Build
+        run: dotnet publish --configuration Debug
 
-    - name: Build
-      run: dotnet build  
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: net8.0-artifacts
+          path: |
+            bin/Debug/net8.0/publish/RockTheVote*
 
-    - name: Create zip
-      run: cd ${debugPath} && mv net8.0 $dllName && zip -r ${dllName}.zip ${dllName}
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: net8.0-artifacts
+          path: bin/Debug/net8.0
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
+      - name: Create Tag
+        id: tag_version
+        run: |
+          DATE=$(date +'%y.%m.%d-%H%M%S')
+          echo "RELEASE_TAG=$DATE" >> $GITHUB_ENV
 
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ${{env.debugPath}}/${{env.dllName}}.zip
-        asset_name: ${{env.dllName}}_${{github.ref_name}}.zip
-        asset_content_type: application/zip
+      - name: Determine if Pre-release
+        id: prerelease
+        run: |
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "IS_PRERELEASE=true" >> $GITHUB_ENV
+          else
+            echo "IS_PRERELEASE=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          files: bin/Debug/net8.0/*
+          prerelease: ${{ env.IS_PRERELEASE }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
