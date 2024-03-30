@@ -16,7 +16,6 @@ namespace cs2_rockthevote
         private EndMapVoteManager _voteManager;
         private EndOfMapConfig _config = new();
         private Timer? _timer;
-        private bool deathMatch => _gameMode?.GetPrimitiveValue<int>() == 2 && _gameType?.GetPrimitiveValue<int>() == 1;
         private ConVar? _gameType;
         private ConVar? _gameMode;
 
@@ -69,9 +68,6 @@ namespace cs2_rockthevote
 
         public void OnLoad(Plugin plugin)
         {
-            _gameMode = ConVar.Find("game_mode");
-            _gameType = ConVar.Find("game_type");
-
             void MaybeStartTimer()
             {
                 KillTimer();
@@ -93,7 +89,7 @@ namespace cs2_rockthevote
 
                 if (!_pluginState.DisableCommands && !_gameRules.WarmupRunning && CheckMaxRounds() && _config.Enabled)
                     StartVote();
-                else if (deathMatch)
+                else 
                 {
                     MaybeStartTimer();
                 }
