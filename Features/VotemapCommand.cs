@@ -72,11 +72,13 @@ namespace cs2_rockthevote
                 votemapMenu.AddMenuOption(map.Name, (CCSPlayerController player, ChatMenuOption option) =>
                 {
                     AddVote(player, option.Text);
+                    MenuManager.CloseActiveMenu(player);
                 }, _mapCooldown.IsMapInCooldown(map.Name));
 
                 votemapMenuHud.AddMenuOption(map.Name, (CCSPlayerController player, ChatMenuOption option) =>
                 {
                     AddVote(player, option.Text);
+                    MenuManager.CloseActiveMenu(player);
                 }, _mapCooldown.IsMapInCooldown(map.Name));
             }
         }
