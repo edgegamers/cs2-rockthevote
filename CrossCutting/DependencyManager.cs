@@ -1,66 +1,46 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace cs2_rockthevote
-{
-    public class DependencyManager<TPlugin, TConfig>
-    {
-        private List<IPluginDependency<TPlugin, TConfig>> Dependencies { get; set; } = new();
+namespace cs2_rockthevote;
 
-        private List<Type> TypesToAdd { get; set; } = new();
+public class DependencyManager<TPlugin, TConfig> {
+  private readonly Type dependencyType =
+    typeof(IPluginDependency<TPlugin, TConfig>);
 
-        Type dependencyType = typeof(IPluginDependency<TPlugin, TConfig>);
+  private List<IPluginDependency<TPlugin, TConfig>> Dependencies { get; set; } =
+    new();
 
-        public void LoadDependencies(Assembly assembly)
-        {
+  private List<Type> TypesToAdd { get; } = new();
 
-            var typesToAdd = assembly.GetTypes()
-                .Where(x => x.IsClass)
-                .Where(dependencyType.IsAssignableFrom);
+  public void LoadDependencies(Assembly assembly) {
+    var typesToAdd = assembly.GetTypes()
+     .Where(x => x.IsClass)
+     .Where(dependencyType.IsAssignableFrom);
 
-            TypesToAdd.AddRange(typesToAdd);
-        }
+    TypesToAdd.AddRange(typesToAdd);
+  }
 
-        public void AddIt(IServiceCollection collection)
-        {
-            foreach (var type in TypesToAdd)
-            {
-                collection.AddSingleton(type);
-            }
+  public void AddIt(IServiceCollection collection) {
+    foreach (var type in TypesToAdd) collection.AddSingleton(type);
 
-            collection.AddSingleton(p =>
-            {
-                Dependencies = TypesToAdd
-                    .Where(x => dependencyType.IsAssignableFrom(x))
-                    .Select(type => (IPluginDependency<TPlugin, TConfig>)p.GetService(type)!)
-                    .ToList();
+    collection.AddSingleton(p => {
+      Dependencies = TypesToAdd.Where(x => dependencyType.IsAssignableFrom(x))
+       .Select(type => (IPluginDependency<TPlugin, TConfig>)p.GetService(type)!)
+       .ToList();
 
-                return this;
-            });
-        }
+      return this;
+    });
+  }
 
-        public void OnMapStart(string mapName)
-        {
-            foreach (var service in Dependencies)
-            {
-                service.OnMapStart(mapName);
-            }
-        }
+  public void OnMapStart(string mapName) {
+    foreach (var service in Dependencies) service.OnMapStart(mapName);
+  }
 
-        public void OnPluginLoad(TPlugin plugin)
-        {
-            foreach (var service in Dependencies)
-            {
-                service.OnLoad(plugin);
-            }
-        }
+  public void OnPluginLoad(TPlugin plugin) {
+    foreach (var service in Dependencies) service.OnLoad(plugin);
+  }
 
-        public void OnConfigParsed(TConfig config)
-        {
-            foreach (var service in Dependencies)
-            {
-                service.OnConfigParsed(config);
-            }
-        }
-    }
+  public void OnConfigParsed(TConfig config) {
+    foreach (var service in Dependencies) service.OnConfigParsed(config);
+  }
 }
