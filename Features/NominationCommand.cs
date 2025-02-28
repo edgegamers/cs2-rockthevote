@@ -98,19 +98,6 @@ public class NominationCommand : IPluginDependency<Plugin, Config> {
   }
 
   private void Nominate(CCSPlayerController player, string map) {
-    if (map == Server.MapName) {
-      player!.PrintToChat(
-        _localizer.LocalizeWithPrefix("general.validation.current-map"));
-      return;
-    }
-
-    if (_mapCooldown.IsMapInCooldown(map)) {
-      player!.PrintToChat(
-        _localizer.LocalizeWithPrefix(
-          "general.validation.map-played-recently"));
-      return;
-    }
-
     if (_mapLister.Maps!.Select(x => x.Name)
      .FirstOrDefault(x => x.ToLower() == map) is null) {
       var result = _mapLister.Maps!.Select(x => x.Name)
@@ -122,6 +109,19 @@ public class NominationCommand : IPluginDependency<Plugin, Config> {
       }
 
       map = result;
+    }
+
+    if (_mapCooldown.IsMapInCooldown(map)) {
+      player!.PrintToChat(
+        _localizer.LocalizeWithPrefix(
+          "general.validation.map-played-recently"));
+      return;
+    }
+
+    if (map == Server.MapName) {
+      player!.PrintToChat(
+        _localizer.LocalizeWithPrefix("general.validation.current-map"));
+      return;
     }
 
     var userId = player.UserId!.Value;
