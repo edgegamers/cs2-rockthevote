@@ -27,6 +27,7 @@
   "rtv.already-rocked-the-vote": "You already rocked the vote",
   "rtv.votes-reached": "Number of votes reached, starting vote...",
   "rtv.disabled": "Rtv is disabled right now",
+  "forcertv.started": "Player {green}{0}{default} forced a rock the vote",
   "emv.you-voted": "You voted in {0}",
   "emv.vote-ended": "Vote ended the next map will be {green}{0}{default} ({1:N2}% of {2} vote(s))",
   "emv.vote-ended-no-votes": "No votes, the next map will be {green}{0}",

@@ -25,18 +25,21 @@ public partial class Plugin : BasePlugin, IPluginConfig<Config> {
   private readonly NextMapCommand _nextMap;
   private readonly NominationCommand _nominationManager;
   private readonly RockTheVoteCommand _rtvManager;
+  private readonly ForceRockTheVoteCommand _forceRTVManager;
   private readonly TimeLeftCommand _timeLeft;
   private readonly VotemapCommand _votemapManager;
 
   public Plugin(DependencyManager<Plugin, Config> dependencyManager,
     NominationCommand nominationManager, ChangeMapManager changeMapManager,
     VotemapCommand voteMapManager, RockTheVoteCommand rtvManager,
-    TimeLeftCommand timeLeft, NextMapCommand nextMap) {
+    ForceRockTheVoteCommand forceRtvManager, TimeLeftCommand timeLeft,
+    NextMapCommand nextMap) {
     _dependencyManager = dependencyManager;
     _nominationManager = nominationManager;
     _changeMapManager  = changeMapManager;
     _votemapManager    = voteMapManager;
     _rtvManager        = rtvManager;
+    _forceRTVManager   = forceRtvManager;
     _timeLeft          = timeLeft;
     _nextMap           = nextMap;
   }
