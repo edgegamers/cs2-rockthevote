@@ -1,58 +1,39 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Modules.Cvars;
 
-namespace cs2_rockthevote.Core
-{
-    public class TimeLimitManager : IPluginDependency<Plugin, Config>
-    {
-        private GameRules _gameRules;
+namespace cs2_rockthevote.Core;
 
-        private ConVar? _timeLimit;
+public class TimeLimitManager : IPluginDependency<Plugin, Config> {
+  private readonly GameRules _gameRules;
 
-        private decimal TimeLimitValue => (decimal)(_timeLimit?.GetPrimitiveValue<float>() ?? 0F) * 60M;
+  private ConVar? _timeLimit;
 
-        public bool UnlimitedTime => TimeLimitValue <= 0;
+  public TimeLimitManager(GameRules gameRules) { _gameRules = gameRules; }
 
-        public decimal TimePlayed
-        {
-            get
-            {
-                if (_gameRules.WarmupRunning)
-                    return 0;
+  private decimal TimeLimitValue
+    => (decimal)(_timeLimit?.GetPrimitiveValue<float>() ?? 0F) * 60M;
 
-                return (decimal)(Server.CurrentTime - _gameRules.GameStartTime);
-            }
-        }
+  public bool UnlimitedTime => TimeLimitValue <= 0;
 
-        public decimal TimeRemaining
-        {
-            get
-            {
-                if (UnlimitedTime || TimePlayed > TimeLimitValue)
-                    return 0;
+  public decimal TimePlayed {
+    get {
+      if (_gameRules.WarmupRunning) return 0;
 
-                return TimeLimitValue - TimePlayed;
-            }
-        }
-
-        public TimeLimitManager(GameRules gameRules)
-        {
-            _gameRules = gameRules;
-        }
-
-        void LoadCvar()
-        {
-            _timeLimit = ConVar.Find("mp_timelimit");
-        }
-
-        public void OnMapStart(string map)
-        {
-            LoadCvar();
-        }
-
-        public void OnLoad(Plugin plugin)
-        {
-            LoadCvar();
-        }
+      return (decimal)(Server.CurrentTime - _gameRules.GameStartTime);
     }
+  }
+
+  public decimal TimeRemaining {
+    get {
+      if (UnlimitedTime || TimePlayed > TimeLimitValue) return 0;
+
+      return TimeLimitValue - TimePlayed;
+    }
+  }
+
+  public void OnMapStart(string map) { LoadCvar(); }
+
+  public void OnLoad(Plugin plugin) { LoadCvar(); }
+
+  private void LoadCvar() { _timeLimit = ConVar.Find("mp_timelimit"); }
 }

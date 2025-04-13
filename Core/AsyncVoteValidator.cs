@@ -1,20 +1,19 @@
-﻿namespace cs2_rockthevote
-{
-    public class AsyncVoteValidator
-    {
-        private float VotePercentage = 0F;
-        public int RequiredVotes { get => (int)Math.Round(ServerManager.ValidPlayerCount() * VotePercentage); }
-        private IVoteConfig _config { get; set; }
+﻿namespace cs2_rockthevote;
 
-        public AsyncVoteValidator(IVoteConfig config)
-        {
-            _config = config;
-            VotePercentage = _config.VotePercentage / 100F;
-        }
+public class AsyncVoteValidator {
+  private readonly float VotePercentage;
 
-        public bool CheckVotes(int numberOfVotes)
-        {
-            return numberOfVotes > 0 && numberOfVotes >= RequiredVotes;
-        }
-    }
+  public AsyncVoteValidator(IVoteConfig config) {
+    _config        = config;
+    VotePercentage = _config.VotePercentage / 100F;
+  }
+
+  public int RequiredVotes
+    => (int)Math.Round(ServerManager.ValidPlayerCount() * VotePercentage);
+
+  private IVoteConfig _config { get; }
+
+  public bool CheckVotes(int numberOfVotes) {
+    return numberOfVotes > 0 && numberOfVotes >= RequiredVotes;
+  }
 }
