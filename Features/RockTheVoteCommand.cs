@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 
 namespace cs2_rockthevote;
@@ -12,13 +13,25 @@ public partial class Plugin {
   }
 
   [GameEventHandler(HookMode.Pre)]
-  public HookResult EventPlayerDisconnectRTV(EventPlayerDisconnect @event,
-    GameEventInfo eventInfo) {
-    var player = @event.Userid;
-    _rtvManager.PlayerDisconnected(player);
-    return HookResult.Continue;
+  public HookResult EventPlayerDisconnectRTV(EventPlayerDisconnect @event, GameEventInfo @eventInfo){
+      var player = @event.Userid;
+      _rtvManager.PlayerDisconnected(player);
+      return HookResult.Continue;
+  }
+
+  [ConsoleCommand("forcertv", "An admin has violently rocked the vote")]
+  public void OnForceRTV(CCSPlayerController? player, CommandInfo? command){
+      if (player == null) return;
+            
+      var permCheck = AdminManager.PlayerHasPermissions(player, "@css/changemap");
+
+      if (permCheck)
+      {
+          _rtvManager.ForceRTV();
+      }
   }
 }
+
 
 public class RockTheVoteCommand : IPluginDependency<Plugin, Config> {
   private readonly GameRules _gameRules;
@@ -40,11 +53,6 @@ public class RockTheVoteCommand : IPluginDependency<Plugin, Config> {
   public bool VotesAlreadyReached => _voteManager!.VotesAlreadyReached;
 
   public void OnMapStart(string map) { _voteManager!.OnMapStart(map); }
-
-  public void OnConfigParsed(Config config) {
-    _config      = config.Rtv;
-    _voteManager = new AsyncVoteManager(_config);
-  }
 
   public void CommandHandler(CCSPlayerController? player) {
     if (player is null) return;
@@ -72,8 +80,8 @@ public class RockTheVoteCommand : IPluginDependency<Plugin, Config> {
       player.PrintToChat(_localizer.LocalizeWithPrefix(
         "general.validation.minimum-players", _config!.MinPlayers));
       return;
-    }
-
+    }                
+        
     var result = _voteManager!.AddVote(player.UserId!.Value);
     switch (result.Result) {
       case VoteResultEnum.Added:
@@ -96,8 +104,18 @@ public class RockTheVoteCommand : IPluginDependency<Plugin, Config> {
         break;
     }
   }
+  
+  public void OnConfigParsed(Config config){
+      _config = config.Rtv;
+      _voteManager = new AsyncVoteManager(_config);
+  }
 
   public void PlayerDisconnected(CCSPlayerController? player) {
-    if (player?.UserId != null) _voteManager!.RemoveVote(player.UserId.Value);
+      if (player?.UserId != null) _voteManager!.RemoveVote(player.UserId.Value);
+  }
+  
+  public void ForceRTV(){
+      Server.PrintToChatAll(_localizer.LocalizeWithPrefix("rtv.votes-reached"));
+      _endmapVoteManager.StartVote(_config);
   }
 }
