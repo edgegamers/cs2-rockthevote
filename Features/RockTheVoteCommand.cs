@@ -6,8 +6,6 @@ using CounterStrikeSharp.API.Modules.Commands;
 
 namespace cs2_rockthevote;
 
-        
-
 public partial class Plugin {
   [ConsoleCommand("rtv", "Votes to rock the vote")]
   public void OnRTV(CCSPlayerController? player, CommandInfo? command) {
@@ -17,7 +15,7 @@ public partial class Plugin {
   [GameEventHandler(HookMode.Pre)]
   public HookResult EventPlayerDisconnectRTV(EventPlayerDisconnect @event, GameEventInfo @eventInfo){
       var player = @event.Userid;
-      rtvManager.PlayerDisconnected(player);
+      _rtvManager.PlayerDisconnected(player);
       return HookResult.Continue;
   }
 
@@ -32,7 +30,6 @@ public partial class Plugin {
           _rtvManager.ForceRTV();
       }
   }
-
 }
 
 
@@ -56,11 +53,6 @@ public class RockTheVoteCommand : IPluginDependency<Plugin, Config> {
   public bool VotesAlreadyReached => _voteManager!.VotesAlreadyReached;
 
   public void OnMapStart(string map) { _voteManager!.OnMapStart(map); }
-
-  public void OnConfigParsed(Config config) {
-    _config      = config.Rtv;
-    _voteManager = new AsyncVoteManager(_config);
-  }
 
   public void CommandHandler(CCSPlayerController? player) {
     if (player is null) return;
