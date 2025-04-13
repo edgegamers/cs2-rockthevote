@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 
 namespace cs2_rockthevote
@@ -20,6 +21,19 @@ namespace cs2_rockthevote
             var player = @event.Userid;
             _rtvManager.PlayerDisconnected(player);
             return HookResult.Continue;
+        }
+
+        [ConsoleCommand("forcertv", "An admin has violently rocked the vote")]
+        public void OnForceRTV(CCSPlayerController? player, CommandInfo? command)
+        {
+            if (player == null) return;
+            
+            var permCheck = AdminManager.PlayerHasPermissions(player, "@css/changemap");
+
+            if (permCheck)
+            {
+                _rtvManager.ForceRTV();
+            }
         }
     }
 
@@ -107,6 +121,12 @@ namespace cs2_rockthevote
         {
             _config = config.Rtv;
             _voteManager = new AsyncVoteManager(_config);
+        }
+
+        public void ForceRTV()
+        {
+            Server.PrintToChatAll(_localizer.LocalizeWithPrefix("rtv.votes-reached"));
+            _endmapVoteManager.StartVote(_config);
         }
     }
 }
