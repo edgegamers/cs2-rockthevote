@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 
 namespace cs2_rockthevote;
@@ -17,6 +18,17 @@ public partial class Plugin {
     var player = @event.Userid;
     _rtvManager.PlayerDisconnected(player);
     return HookResult.Continue;
+  }
+
+  [ConsoleCommand("forcertv", "An admin has violently rocked the vote")]
+  public void OnForceRTV(CCSPlayerController? player, CommandInfo? command){
+    if (player == null) return;
+
+    var permCheck = AdminManager.PlayerHasPermissions(player, "@css/changemap");
+
+    if (permCheck){
+      _rtvManager.ForceRTV();
+    }
   }
 }
 
@@ -99,5 +111,10 @@ public class RockTheVoteCommand : IPluginDependency<Plugin, Config> {
 
   public void PlayerDisconnected(CCSPlayerController? player) {
     if (player?.UserId != null) _voteManager!.RemoveVote(player.UserId.Value);
+  }
+
+  public void ForceRTV(){
+    Server.PrintToChatAll(_localizer.Localize("rtv.votes-reached"));
+    _endmapVoteManager.StartVote(_config);
   }
 }
