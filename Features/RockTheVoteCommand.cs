@@ -20,15 +20,12 @@ public partial class Plugin {
     return HookResult.Continue;
   }
 
-  [ConsoleCommand("forcertv", "An admin has violently rocked the vote")]
+  [ConsoleCommand("forcertv", "An admin has forced an RTV")]
+  [RequiresPermissions("@css/changemap")]
   public void OnForceRTV(CCSPlayerController? player, CommandInfo? command){
     if (player == null) return;
 
-    var permCheck = AdminManager.PlayerHasPermissions(player, "@css/changemap");
-
-    if (permCheck){
-      _rtvManager.ForceRTV();
-    }
+    _rtvManager.ForceRTV();
   }
 }
 
