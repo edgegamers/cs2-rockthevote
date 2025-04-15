@@ -20,8 +20,9 @@ public partial class Plugin {
     return HookResult.Continue;
   }
 
-  [ConsoleCommand("forcertv", "An admin has forced an RTV")]
-  [RequiresPermissions("@css/changemap")]
+  [ConsoleCommand("forcertvbypass", "Force an RTV to happen immediately regardless of the RTV votes")]
+  //[ConsoleCommand("forcertv", "Force an RTV to happen immediately regardless of the RTV votes")]
+  //[RequiresPermissions("@css/changemap")]
   public void OnForceRTV(CCSPlayerController? player, CommandInfo? command){
     if (player == null) return;
 
