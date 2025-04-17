@@ -12,6 +12,11 @@ public partial class Plugin {
     _rtvManager.CommandHandler(player!);
   }
 
+  [ConsoleCommand("sanitycheck", "Runs a test command")]
+  public void OnSanityCheck(CCSPlayerController? player, CommandInfo? command) {
+    player.PrintToChat("You are sane!");
+  }
+
   [GameEventHandler(HookMode.Pre)]
   public HookResult EventPlayerDisconnectRTV(EventPlayerDisconnect @event,
     GameEventInfo eventInfo) {
