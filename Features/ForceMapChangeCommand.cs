@@ -24,11 +24,13 @@ public partial class Plugin {
 public class ForceMapChangeCommand : IPluginDependency<Plugin, Config> {
 
     private readonly MapLister _mapLister;   
+    private readonly ChangeMapManager _changeMapManager;
     private readonly StringLocalizer _localizer;
     
-    public ForceMapChangeCommand(MapLister mapLister, StringLocalizer localizer)
+    public ForceMapChangeCommand(MapLister mapLister, ChangeMapManager changeMapManager, StringLocalizer localizer)
     {
         _mapLister = mapLister;
+        _changeMapManager = changeMapManager;   
         _localizer = localizer;
     }
 
@@ -45,6 +47,9 @@ public class ForceMapChangeCommand : IPluginDependency<Plugin, Config> {
             }
 
             map = result;
+            
+            _changeMapManager.ScheduleMapChange(map, true);
+            _changeMapManager.ChangeNextMap(true);
         }
     }
 }
