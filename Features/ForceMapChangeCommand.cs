@@ -9,7 +9,7 @@ public partial class Plugin {
     [ConsoleCommand("changemap", "Changes map to specified map")]
     //[RequiresPermissions("@css/changemap")]
     public void OnForceChangeMap(CCSPlayerController? player, CommandInfo? command) {
-        if (command == null) return;
+        //if (command == null) return;
         
         if (string.IsNullOrEmpty(command.ArgString)) {
             command.ReplyToCommand("You did not specify what map to change to.");
