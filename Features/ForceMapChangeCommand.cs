@@ -7,7 +7,7 @@ namespace cs2_rockthevote;
 
 public partial class Plugin {
     [ConsoleCommand("changemap", "Changes map to specified map")]
-    //[RequiresPermissions("@css/changemap")]
+    [RequiresPermissions("@css/changemap")]
     public void OnForceChangeMap(CCSPlayerController? player, CommandInfo? command) {
         if (player == null) return;
         
