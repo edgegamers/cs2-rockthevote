@@ -27,8 +27,7 @@ public class ChangeMapManager : IPluginDependency<Plugin, Config> {
   private bool _mapEnd;
   private readonly MapLister _mapLister;
   
-  public Map[] _maps { get; private set; } = new Map[0];
-  //private Map[] _maps = new Map[0];
+  private Map[] _maps = new Map[0];
   private Plugin? _plugin;
   private readonly PluginState _pluginState;
   private string _prefix = DEFAULT_PREFIX;

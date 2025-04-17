@@ -16,19 +16,35 @@ public partial class Plugin {
             return;
         }
         
-        bool foundMatch = false;
-        foreach (var map in _changeMapManager._maps)
-        {
-            if (map.Name == command.ArgString) {
-                foundMatch = true;
-                _changeMapManager.ScheduleMapChange(command.ArgString, true);
-                _changeMapManager.ChangeNextMap(true);
-                break;
-            }
-        }
+        var map = command.GetArg(1).Trim().ToLower();
+        _forceMapChangeManager.ForceChangeMap(player, map);
+    }
+}
 
-        if (!foundMatch) {
-            player.PrintToChat("Could not find map that matches the specified name. Did you type it in correctly?");
+public class ForceMapChangeCommand : IPluginDependency<Plugin, Config> {
+
+    private readonly MapLister _mapLister;   
+    private readonly StringLocalizer _localizer;
+    
+    public ForceMapChangeCommand(MapLister mapLister, StringLocalizer localizer)
+    {
+        _mapLister = mapLister;
+        _localizer = localizer;
+    }
+
+    public void ForceChangeMap(CCSPlayerController? player, string map)
+    {
+        if (_mapLister.Maps!.Select(x => x.Name)
+                .FirstOrDefault(x => x.ToLower() == map) is null) {
+            var result = _mapLister.Maps!.Select(x => x.Name)
+                .FirstOrDefault(x => x.ToLower().Contains(map));
+            if (result == null) {
+                player!.PrintToChat(
+                    _localizer.LocalizeWithPrefix("general.invalid-map"));
+                return;
+            }
+
+            map = result;
         }
     }
 }
