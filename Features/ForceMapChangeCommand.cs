@@ -8,7 +8,7 @@ namespace cs2_rockthevote;
 public partial class Plugin {
     [ConsoleCommand("changemap", "Changes map to specified map")]
     //[RequiresPermissions("@css/changemap")]
-    public void OnForceChangeMap(CommandInfo? command) {
+    public void OnForceChangeMap(CCSPlayerController? player, CommandInfo? command) {
         if (command == null) return;
         
         if (string.IsNullOrEmpty(command.ArgString)) {
@@ -37,7 +37,10 @@ public class ForceMapChangeCommand : IPluginDependency<Plugin, Config> {
     public void ForceChangeMap(CommandInfo command, string map)
     {
         var maps = _mapLister.Maps;
-        if (maps == null || maps.Length == 0) return;
+        if (maps == null || maps.Length == 0) {
+            command!.ReplyToCommand("Map list was null or empty.");
+            return;
+        }
         
         if (maps!.Select(x => x.Name)
                 .FirstOrDefault(x => x.ToLower() == map) is null) {
