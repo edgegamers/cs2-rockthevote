@@ -7,17 +7,17 @@ namespace cs2_rockthevote;
 
 public partial class Plugin {
     [ConsoleCommand("changemap", "Changes map to specified map")]
-    [RequiresPermissions("@css/changemap")]
-    public void OnForceChangeMap(CCSPlayerController? player, CommandInfo? command) {
-        if (player == null) return;
+    //[RequiresPermissions("@css/changemap")]
+    public void OnForceChangeMap(CommandInfo? command) {
+        if (command == null) return;
         
-        if (command == null || string.IsNullOrEmpty(command.ArgString)) {
-            player.PrintToChat("You did not specify what map to change to.");
+        if (string.IsNullOrEmpty(command.ArgString)) {
+            command.ReplyToCommand("You did not specify what map to change to.");
             return;
         }
         
         var map = command.GetArg(1).Trim().ToLower();
-        _forceMapChangeManager.ForceChangeMap(player, map);
+        _forceMapChangeManager.ForceChangeMap(command, map);
     }
 }
 
@@ -34,14 +34,17 @@ public class ForceMapChangeCommand : IPluginDependency<Plugin, Config> {
         _localizer = localizer;
     }
 
-    public void ForceChangeMap(CCSPlayerController? player, string map)
+    public void ForceChangeMap(CommandInfo command, string map)
     {
-        if (_mapLister.Maps!.Select(x => x.Name)
+        var maps = _mapLister.Maps;
+        if (maps == null || maps.Length == 0) return;
+        
+        if (maps!.Select(x => x.Name)
                 .FirstOrDefault(x => x.ToLower() == map) is null) {
-            var result = _mapLister.Maps!.Select(x => x.Name)
+            var result = maps!.Select(x => x.Name)
                 .FirstOrDefault(x => x.ToLower().Contains(map));
             if (result == null) {
-                player!.PrintToChat(
+                command!.ReplyToCommand(
                     _localizer.LocalizeWithPrefix("general.invalid-map"));
                 return;
             }
