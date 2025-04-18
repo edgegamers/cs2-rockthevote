@@ -28,18 +28,16 @@ public class ForceMapChangeCommand : IPluginDependency<Plugin, Config> {
 
     private readonly MapLister _mapLister;   
     private readonly ChangeMapManager _changeMapManager;
-    private readonly StringLocalizer _localizer;
     
-    public ForceMapChangeCommand(MapLister mapLister, ChangeMapManager changeMapManager, StringLocalizer localizer)
+    public ForceMapChangeCommand(MapLister mapLister, ChangeMapManager changeMapManager)
     {
         _mapLister = mapLister;
         _changeMapManager = changeMapManager;   
-        _localizer = localizer;
     }
 
     public ForceMapChangeResult ForceChangeMap(string map)
     {
-        ForceMapChangeResult mapChangeResult =  new ForceMapChangeResult();
+        ForceMapChangeResult mapChangeResult = new ForceMapChangeResult();
         
         var maps = _mapLister.Maps;
         if (maps == null || maps.Length == 0) {
