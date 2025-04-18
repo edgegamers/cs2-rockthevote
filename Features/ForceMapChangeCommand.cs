@@ -67,8 +67,10 @@ public class ForceMapChangeCommand : IPluginDependency<Plugin, Config> {
     }
 }
 
-public class ForceMapChangeResult
+public struct ForceMapChangeResult
 {
+    public ForceMapChangeResult() { }
+    
     public const string EmptyMapList = "Map list was null or empty.";
     public const string InvalidMapArg = "Invalid map argument.";
 
