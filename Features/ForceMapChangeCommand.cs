@@ -6,12 +6,10 @@ using CounterStrikeSharp.API.Modules.Commands;
 namespace cs2_rockthevote;
 
 public partial class Plugin {
-    //[RequiresPermissions("@css/changemap")]
+    [RequiresPermissionsOr("@css/changemap", "@css/rcon")]
     [ConsoleCommand("changemap", "Changes map to specified map")]
     public void OnForceChangeMap(CCSPlayerController? player, CommandInfo? command) {
-        //if (command == null) return;
-        
-        command.ReplyToCommand("Sanity check. This did run.");
+        if (command == null) return;
         
         if (string.IsNullOrEmpty(command.ArgString)) {
             command.ReplyToCommand("You did not specify what map to change to.");
