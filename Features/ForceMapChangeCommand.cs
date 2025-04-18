@@ -17,7 +17,10 @@ public partial class Plugin {
         }
         
         var map = command.GetArg(1).Trim().ToLower();
-        _forceMapChangeManager.ForceChangeMap(command, map);
+        
+        ForceMapChangeResult result = _forceMapChangeManager.ForceChangeMap(map);
+        
+        if (!result.Success) command!.ReplyToCommand(result.ErrorMessage);
     }
 }
 
@@ -34,22 +37,24 @@ public class ForceMapChangeCommand : IPluginDependency<Plugin, Config> {
         _localizer = localizer;
     }
 
-    public void ForceChangeMap(CommandInfo command, string map)
+    public ForceMapChangeResult ForceChangeMap(string map)
     {
+        ForceMapChangeResult mapChangeResult =  new ForceMapChangeResult();
+        
         var maps = _mapLister.Maps;
         if (maps == null || maps.Length == 0) {
-            command!.ReplyToCommand("Map list was null or empty.");
-            return;
+            mapChangeResult.FailedMapChange(ForceMapChangeResult.EmptyMapList);
+            return mapChangeResult;
         }
         
         if (maps!.Select(x => x.Name)
                 .FirstOrDefault(x => x.ToLower() == map) is null) {
             var result = maps!.Select(x => x.Name)
                 .FirstOrDefault(x => x.ToLower().Contains(map));
-            if (result == null) {
-                command!.ReplyToCommand(
-                    _localizer.LocalizeWithPrefix("general.invalid-map"));
-                return;
+            if (result == null)
+            {
+                mapChangeResult.FailedMapChange(ForceMapChangeResult.InvalidMapArg);
+                return mapChangeResult; 
             }
 
             map = result;
@@ -57,5 +62,23 @@ public class ForceMapChangeCommand : IPluginDependency<Plugin, Config> {
             _changeMapManager.ScheduleMapChange(map, true);
             _changeMapManager.ChangeNextMap(true);
         }
+        
+        return mapChangeResult;
+    }
+}
+
+public class ForceMapChangeResult
+{
+    public const string EmptyMapList = "Map list was null or empty.";
+    public const string InvalidMapArg = "Invalid map argument.";
+
+    public bool Success { get; private set; } = true;
+    
+    public string ErrorMessage { get; private set; } = String.Empty;
+
+    public void FailedMapChange(string failMessage)
+    {
+        Success = false;
+        ErrorMessage = failMessage;
     }
 }
