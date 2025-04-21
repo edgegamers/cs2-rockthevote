@@ -26,7 +26,7 @@ public class ChangeMapManager : IPluginDependency<Plugin, Config> {
   private readonly StringLocalizer _localizer;
   private bool _mapEnd;
   private readonly MapLister _mapLister;
-
+  
   private Map[] _maps = new Map[0];
   private Plugin? _plugin;
   private readonly PluginState _pluginState;
