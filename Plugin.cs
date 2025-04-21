@@ -25,13 +25,14 @@ public partial class Plugin : BasePlugin, IPluginConfig<Config> {
   private readonly NextMapCommand _nextMap;
   private readonly NominationCommand _nominationManager;
   private readonly RockTheVoteCommand _rtvManager;
+  private readonly ForceMapChangeCommand _forceMapChangeManager;
   private readonly TimeLeftCommand _timeLeft;
   private readonly VotemapCommand _votemapManager;
 
   public Plugin(DependencyManager<Plugin, Config> dependencyManager,
     NominationCommand nominationManager, ChangeMapManager changeMapManager,
     VotemapCommand voteMapManager, RockTheVoteCommand rtvManager,
-    TimeLeftCommand timeLeft, NextMapCommand nextMap) {
+    TimeLeftCommand timeLeft, NextMapCommand nextMap, ForceMapChangeCommand forceMapChangeManager) {
     _dependencyManager = dependencyManager;
     _nominationManager = nominationManager;
     _changeMapManager  = changeMapManager;
@@ -39,6 +40,8 @@ public partial class Plugin : BasePlugin, IPluginConfig<Config> {
     _rtvManager        = rtvManager;
     _timeLeft          = timeLeft;
     _nextMap           = nextMap;
+    
+    _forceMapChangeManager = forceMapChangeManager;
   }
 
   public override string ModuleName => "RockTheVote";
