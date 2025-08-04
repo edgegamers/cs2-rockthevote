@@ -21,6 +21,17 @@ public interface IEndOfMapConfig {
   public bool HideHudAfterVote { get; set; }
 }
 
+
+public class ExtendConfig : ICommandConfig, IVoteConfig {
+  public bool Enabled { get; set; } = true;
+  public bool EnabledInWarmup { get; set; } = false;
+  public int MinPlayers { get; set; } = 0;
+  public int MinRounds { get; set; } = 5;
+  public int VotePercentage { get; set; } = 60;
+  public bool ChangeMapImmediatly { get; set; } = true;
+  public int DurationMinutes { get; set; } = 30;
+}
+
 public class EndOfMapConfig : IEndOfMapConfig {
   public bool Enabled { get; set; } = true;
   public int TriggerSecondsBeforeEnd { get; set; } = 120;
@@ -31,6 +42,7 @@ public class EndOfMapConfig : IEndOfMapConfig {
   public bool ChangeMapImmediatly { get; set; } = false;
   public int VoteDuration { get; set; } = 30;
   public bool HideHudAfterVote { get; set; } = false;
+  public bool ExtendVote { get; set; } = true;
 }
 
 public class RtvConfig : ICommandConfig, IVoteConfig, IEndOfMapConfig {
@@ -71,6 +83,7 @@ public class Config : IBasePluginConfig {
   public EndOfMapConfig EndOfMapVote { get; set; } = new();
   public TimeleftConfig Timeleft { get; set; } = new();
   public NextmapConfig Nextmap { get; set; } = new();
+  public ExtendConfig Extend { get; set; } = new();
   public ushort MapsInCoolDown { get; set; } = 3;
   public int Version { get; set; } = 9;
 }
