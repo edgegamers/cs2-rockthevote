@@ -37,5 +37,7 @@
   "emv.hud.finished": "Balsošana beidzās, nākošā karte: {0}",
   "nextmap": "Nākošā karte būs {green}{0}",
   "nextmap.decided-by-vote": "Nākošā karte tiks izvēlētā pēc balsošanas",
-  "general.validation.map-played-recently": "A térkép nemrégiben játszották"
+  "general.validation.map-played-recently": "A térkép nemrégiben játszották",
+  "emv.you-voted-extend": "Jūs nobalsojāt par kartes pagarināšanu!",
+  "emv.vote-extended": "Karte ir pagarināta par {0} minūtēm!"
 }

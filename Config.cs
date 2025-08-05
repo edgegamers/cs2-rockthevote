@@ -26,7 +26,7 @@ public class ExtendConfig : ICommandConfig, IVoteConfig {
   public bool Enabled { get; set; } = true;
   public bool EnabledInWarmup { get; set; } = false;
   public int MinPlayers { get; set; } = 0;
-  public int MinRounds { get; set; } = 5;
+  public int MinRounds { get; set; } = 0;
   public int VotePercentage { get; set; } = 60;
   public bool ChangeMapImmediatly { get; set; } = true;
   public int DurationMinutes { get; set; } = 30;

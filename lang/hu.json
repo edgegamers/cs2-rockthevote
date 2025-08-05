@@ -37,5 +37,7 @@
   "emv.hud.finished": "A szavazás végetért, a köv. pálya: {0}",
   "nextmap": "A köv. pálya ez lesz: {green}{0}",
   "nextmap.decided-by-vote": "A következő pálya majd az automatikus szavazás útján fog eldőlni",
-  "general.validation.map-played-recently": "Ezt a pályát nemrégiben játszották"
+  "general.validation.map-played-recently": "Ezt a pályát nemrégiben játszották",
+  "emv.you-voted-extend": "Szavaztál a pálya meghosszabbítására!",
+  "emv.vote-extended": "A pálya {0} perccel meghosszabbítva!"
 }

@@ -212,8 +212,8 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
       menu.AddMenuOption(label, (player, option) => {
         ExtendVoted(player, label, extendConfig.DurationMinutes);
         MenuManager.CloseActiveMenu(player);
-      })
-      
+      });
+    }
 
     foreach (var player in ServerManager.ValidPlayers())
       MenuManager.OpenChatMenu(player, menu);
