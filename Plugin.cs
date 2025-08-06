@@ -73,9 +73,6 @@ public partial class Plugin : BasePlugin, IPluginConfig<Config> {
   }
 
   public override void Load(bool hotReload) {
-    new ConVar("rockthevote_mode", "jb", "RockTheVote mode (jb & surf)"
-        ConVarFlags.FCVAR_PROTECTED);
-
     _dependencyManager.OnPluginLoad(this);
     RegisterListener<OnMapStart>(_dependencyManager.OnMapStart);
   }
