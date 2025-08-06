@@ -161,11 +161,14 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
 
           _pluginState.EofVoteHappening = false;
           _pluginState.MapChangeScheduled = false;
+
+          KillTimer();
+
           return;
     }
 
     KillTimer();
-
+    
     if (maxVotes > 0)
       Server.PrintToChatAll(_localizer.LocalizeWithPrefix("emv.vote-ended",
         winner.Key, percent, totalVotes));
