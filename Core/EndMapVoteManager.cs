@@ -3,6 +3,7 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Timers;
+using CounterStrikeSharp.API.Modules.Cvars;
 using cs2_rockthevote.Core;
 using static CounterStrikeSharp.API.Core.Listeners;
 using Timer = CounterStrikeSharp.API.Modules.Timers.Timer;
@@ -46,6 +47,7 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
   private readonly Dictionary<string, int> Votes = new();
 
   private bool _extendUsed = false;
+  private bool _rtvTriggered = false;
 
   public EndMapVoteManager(MapLister mapLister,
     ChangeMapManager changeMapManager, NominationCommand nominationManager,
@@ -138,6 +140,28 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
     decimal totalVotes = Votes.Select(x => x.Value).Sum();
     var     percent    = totalVotes > 0 ? winner.Value / totalVotes * 100M : 0;
 
+    var extendConfig = (_plugin!.Config as Config)?.Extend;
+    if (extendConfig != null 
+        && winner.Key != null 
+        && winner.Key.StartsWith("Extend Map") 
+        && !_extendUsed) {
+          _extendUsed = true;
+          int timeToAdd = extendConfig.DurationMinutes * 60;
+          _timeLimitManager.AddTime(timeToAdd);
+
+          var mode = ConVar.Find("rockthevote_mode")?.GetPrimitiveValue<string>()?.ToLowerInvariant();
+          if (mode == "surf"){
+            var cvar = ConVar.Find("mp_timelimit");
+            if (cvar != null) {
+              var current = cvar.GetPrimitiveValue<float>();
+              cvar.SetValue(current = extendConfig.DurationMinutes);
+            }
+          }
+
+          Server.PrintToChatAll(_localizer.LocalizeWithPrefix("emv.vote-extended", extendConfig.DurationMinutes));
+          return;
+    }
+
     if (maxVotes > 0)
       Server.PrintToChatAll(_localizer.LocalizeWithPrefix("emv.vote-ended",
         winner.Key, percent, totalVotes));
@@ -169,12 +193,14 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
     return array;
   }
 
-  public void StartVote(IEndOfMapConfig config) {
+  public void StartVote(IEndOfMapConfig config, bool rtvTriggered = false) {
     Votes.Clear();
     _voted.Clear();
 
     _pluginState.EofVoteHappening = true;
     _config                       = config;
+    _rtvTriggered                 = rtvTriggered;
+
     var mapsToShow = _config!.MapsToShow == 0 ?
       MAX_OPTIONS_HUD_MENU :
       _config!.MapsToShow;
@@ -202,7 +228,8 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
 
     var extendConfig = (_plugin!.Config as Config)?.Extend;
     var endOfMapConfig = (_plugin!.Config as Config)?.EndOfMapVote;
-    if (extendConfig != null 
+    if (!_rtvTriggered
+        && extendConfig != null
         && endOfMapConfig != null
         && endOfMapConfig.ExtendVote
         && extendConfig.Enabled

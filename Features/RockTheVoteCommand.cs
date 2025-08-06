@@ -101,7 +101,7 @@ public class RockTheVoteCommand : IPluginDependency<Plugin, Config> {
           $"{_localizer.LocalizeWithPrefix("rtv.rocked-the-vote", player.PlayerName)} {_localizer.Localize("general.votes-needed", result.VoteCount, result.RequiredVotes)}");
         Server.PrintToChatAll(
           _localizer.LocalizeWithPrefix("rtv.votes-reached"));
-        _endmapVoteManager.StartVote(_config);
+        _endmapVoteManager.StartVote(_config, true);
         break;
     }
   }
@@ -112,6 +112,6 @@ public class RockTheVoteCommand : IPluginDependency<Plugin, Config> {
 
   public void ForceRTV(){
     Server.PrintToChatAll(_localizer.Localize("rtv.votes-reached"));
-    _endmapVoteManager.StartVote(_config);
+    _endmapVoteManager.StartVote(_config, true);
   }
 }
