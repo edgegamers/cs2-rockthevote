@@ -149,12 +149,9 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
           _timeLimitManager.AddTime(timeToAdd);
 
           var mode = ConVar.Find("rockthevote_mode")?.GetPrimitiveValue<string>()?.ToLowerInvariant();
+          
           if (mode == "surf"){
-            var cvar = ConVar.Find("mp_roundtime");
-            if (cvar != null) {
-              var current = cvar.GetPrimitiveValue<float>();
-              cvar.SetValue(current + extendConfig.DurationMinutes);
-            }
+            TimeLimitManager.AddTimeRemaining(extendConfig.DurationMinutes * 60);
           }
 
           Server.PrintToChatAll(_localizer.LocalizeWithPrefix("emv.vote-extended", extendConfig.DurationMinutes));
