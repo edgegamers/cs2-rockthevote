@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Events;
+using CounterStrikeSharp.API.Modules.Cvars;
 using cs2_rockthevote.Features;
 using Microsoft.Extensions.DependencyInjection;
 using static CounterStrikeSharp.API.Core.Listeners;
@@ -72,6 +73,9 @@ public partial class Plugin : BasePlugin, IPluginConfig<Config> {
   }
 
   public override void Load(bool hotReload) {
+    new ConVar("rockthevote_mode", "jb", "RockTheVote mode (jb & surf)"
+        ConVarFlags.FCVAR_PROTECTED);
+
     _dependencyManager.OnPluginLoad(this);
     RegisterListener<OnMapStart>(_dependencyManager.OnMapStart);
   }
