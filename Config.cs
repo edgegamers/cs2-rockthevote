@@ -29,7 +29,7 @@ public class ExtendConfig : ICommandConfig, IVoteConfig {
   public int MinRounds { get; set; } = 0;
   public int VotePercentage { get; set; } = 60;
   public bool ChangeMapImmediatly { get; set; } = true;
-  public int DurationMinutes { get; set; } = 30;
+  public int DurationMinutes { get; set; } = 5;
 }
 
 public class EndOfMapConfig : IEndOfMapConfig {

@@ -129,7 +129,6 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
 
   private void EndVote() {
     var mapEnd = _config is EndOfMapConfig;
-    KillTimer();
     decimal maxVotes = Votes.Select(x => x.Value).Max();
     IEnumerable<KeyValuePair<string, int>> potentialWinners =
       Votes.Where(x => x.Value == maxVotes);
@@ -151,10 +150,10 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
 
           var mode = ConVar.Find("rockthevote_mode")?.GetPrimitiveValue<string>()?.ToLowerInvariant();
           if (mode == "surf"){
-            var cvar = ConVar.Find("mp_timelimit");
+            var cvar = ConVar.Find("mp_roundtime");
             if (cvar != null) {
               var current = cvar.GetPrimitiveValue<float>();
-              cvar.SetValue(current = extendConfig.DurationMinutes);
+              cvar.SetValue(current + extendConfig.DurationMinutes);
             }
           }
 
@@ -164,6 +163,8 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
           _pluginState.MapChangeScheduled = false;
           return;
     }
+
+    KillTimer();
 
     if (maxVotes > 0)
       Server.PrintToChatAll(_localizer.LocalizeWithPrefix("emv.vote-ended",

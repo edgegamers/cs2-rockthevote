@@ -78,7 +78,6 @@ public class EndOfMapVote : IPluginDependency<Plugin, Config> {
   }
 
   public void StartVote() {
-    KillTimer();
     if (_config.Enabled) _voteManager.StartVote(_config);
   }
 
