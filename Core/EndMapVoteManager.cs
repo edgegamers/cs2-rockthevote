@@ -159,6 +159,9 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
           }
 
           Server.PrintToChatAll(_localizer.LocalizeWithPrefix("emv.vote-extended", extendConfig.DurationMinutes));
+
+          _pluginState.EofVoteHappening = false;
+          _pluginState.MapChangeScheduled = false;
           return;
     }
 
