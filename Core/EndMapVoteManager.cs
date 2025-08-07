@@ -150,7 +150,7 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
           _timeLimitManager.AddTime(timeToAdd);
 
           if (CV_ROCKTHEVOTEMODE.Value == "surf"){
-            _timeLimitManager.AddTimeRemaining(timeToAdd);
+            TimeLimitManager.AddTimeRemaining(timeToAdd);
           }
 
           Server.PrintToChatAll(_localizer.LocalizeWithPrefix("emv.vote-extended", extendConfig.DurationMinutes));
