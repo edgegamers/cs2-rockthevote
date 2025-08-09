@@ -72,15 +72,7 @@ public partial class Plugin : BasePlugin, IPluginConfig<Config> {
     return $"{Localizer[prefix]} {Localizer[key, values]}";
   }
 
-  public static FakeConVar<string> CV_ROCKTHEVOTEMODE = null!;
-
   public override void Load(bool hotReload) {
-    CV_ROCKTHEVOTEMODE ??= new FakeConVar<string>(
-      "css_rockthevote_mode",
-      "Mode For RockTheVote default - jb (jb, surf)",
-      "jb"
-    );
-
     _dependencyManager.OnPluginLoad(this);
     RegisterListener<OnMapStart>(_dependencyManager.OnMapStart);
   }
