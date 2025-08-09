@@ -39,7 +39,6 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
   private readonly TimeLimitManager _timeLimitManager;
 
   private readonly HashSet<int> _voted = new();
-  public static readonly FakeConVar<string> CV_ROCKTHEVOTEMODE = new("css_rockthevote_mode", "Mode for rockthevote", "jb");
 
   private List<string> mapsEllected = new();
   private int timeLeft = -1;
@@ -148,10 +147,6 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
           _extendUsed = true;
           int timeToAdd = extendConfig.DurationMinutes * 60;
           _timeLimitManager.AddTime(timeToAdd);
-
-          if (CV_ROCKTHEVOTEMODE.Value == "surf"){
-            TimeLimitManager.AddTimeRemaining(timeToAdd);
-          }
 
           Server.PrintToChatAll(_localizer.LocalizeWithPrefix("emv.vote-extended", extendConfig.DurationMinutes));
 

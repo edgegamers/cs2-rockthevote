@@ -42,14 +42,4 @@ public class TimeLimitManager : IPluginDependency<Plugin, Config> {
   var current = _timeLimit.GetPrimitiveValue<float>();
   _timeLimit.SetValue(current + (seconds / 60f));
   }
-
-  public static void AddTimeRemaining(int time) {
-    var gamerules = ServerExtensions.GetGameRules();
-    if (gamerules == null) return;
-    gamerules.RoundTime += time;
-
-    var proxy = ServerExtensions.GetGameRulesProxy();
-    if (proxy == null) return;
-    Utilities.SetStateChanged(proxy, "CCSGameRulesProxy", "m_pGameRules");
-  }
 }
