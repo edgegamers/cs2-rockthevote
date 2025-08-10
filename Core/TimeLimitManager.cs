@@ -38,8 +38,8 @@ public class TimeLimitManager : IPluginDependency<Plugin, Config> {
   private void LoadCvar() { _timeLimit = ConVar.Find("mp_timelimit"); }
 
   public void AddTime(int seconds) {
-  if (_timeLimit == null) return;
-  var current = _timeLimit.GetPrimitiveValue<float>();
-  _timeLimit.SetValue(current + (seconds / 60f));
+    if (_timeLimit == null) return;
+    var current = _timeLimit.GetPrimitiveValue<float>();
+    _timeLimit.SetValue(current + (seconds / 60f));
   }
 }
