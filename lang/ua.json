@@ -37,5 +37,7 @@
   "emv.hud.finished": "Голосування завершено, наступна карта: {0}",
   "nextmap": "Наступна карта буде {green}{0}",
   "nextmap.decided-by-vote": "Наступна карта буде визначена голосуванням",
-  "general.validation.map-played-recently": "Карта була недавно зіграна"
+  "general.validation.map-played-recently": "Карта була недавно зіграна",
+  "emv.you-voted-extend": "Ви проголосували за продовження карти!",
+  "emv.vote-extended": "Карту продовжено на {0} хвилин!"
 }

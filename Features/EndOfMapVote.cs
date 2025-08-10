@@ -27,7 +27,7 @@ public class EndOfMapVote : IPluginDependency<Plugin, Config> {
     _voteManager = voteManager;
   }
 
-  public void OnMapStart(string map) { KillTimer(); }
+  public void OnMapStart(string map) {}
 
 
   public void OnLoad(Plugin plugin) {
@@ -36,7 +36,7 @@ public class EndOfMapVote : IPluginDependency<Plugin, Config> {
       if (!_timeLimit.UnlimitedTime && _config.Enabled)
         _timer = plugin.AddTimer(1.0F, () => {
           if (_gameRules is not null && !_gameRules.WarmupRunning
-            && !_pluginState.DisableCommands && _timeLimit.TimeRemaining > 0)
+            && !_pluginState.DisableCommands && _timeLimit.TimeRemaining > 0 && !_pluginState.EofVoteHappening)
             if (CheckTimeLeft())
               StartVote();
         }, TimerFlags.REPEAT);
@@ -78,7 +78,6 @@ public class EndOfMapVote : IPluginDependency<Plugin, Config> {
   }
 
   public void StartVote() {
-    KillTimer();
     if (_config.Enabled) _voteManager.StartVote(_config);
   }
 

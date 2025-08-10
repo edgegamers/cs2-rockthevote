@@ -37,5 +37,7 @@
   "emv.hud.finished": "Głosowanie zakończone, następna mapa: {0}",
   "nextmap": "Następną mapą będzie {green}{0}",
   "nextmap.decided-by-vote": "Następna mapa zostanie wybrana głosowaniem",
-  "general.validation.map-played-recently": "Mapa została niedawno rozegrana"
+  "general.validation.map-played-recently": "Mapa została niedawno rozegrana",
+  "emv.you-voted-extend": "Zagłosowałeś na przedłużenie mapy!",
+  "emv.vote-extended": "Mapa została przedłużona o {0} minut!"
 }

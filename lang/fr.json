@@ -37,5 +37,7 @@
   "emv.hud.finished": "Vote terminé, prochaine carte : {0}",
   "nextmap": "La prochaine carte sera {green}{0}",
   "nextmap.decided-by-vote": "La prochaine carte sera choisie par vote",
-  "general.validation.map-played-recently": "La carte a été récemment jouée"
+  "general.validation.map-played-recently": "La carte a été récemment jouée",
+  "emv.you-voted-extend": "Vous avez voté pour prolonger la carte !",
+  "emv.vote-extended": "La carte a été prolongée de {0} minutes !"
 }
