@@ -64,20 +64,23 @@ public class RockTheVoteCommand : IPluginDependency<Plugin, Config> {
       return;
     }
 
+    var inSeedingMode = _config.SeedingPlayerCount > 0
+      && ServerManager.ValidPlayerCount() <= _config.SeedingPlayerCount;
+
     if (_gameRules.WarmupRunning) {
       if (!_config.EnabledInWarmup) {
         player.PrintToChat(
           _localizer.LocalizeWithPrefix("general.validation.warmup"));
         return;
       }
-    } else if (_config.MinRounds > 0
+    } else if (!inSeedingMode && _config.MinRounds > 0
       && _config.MinRounds > _gameRules.TotalRoundsPlayed) {
       player!.PrintToChat(_localizer.LocalizeWithPrefix(
         "general.validation.minimum-rounds", _config.MinRounds));
       return;
     }
 
-    if (ServerManager.ValidPlayerCount() < _config!.MinPlayers) {
+    if (!inSeedingMode && ServerManager.ValidPlayerCount() < _config!.MinPlayers) {
       player.PrintToChat(_localizer.LocalizeWithPrefix(
         "general.validation.minimum-players", _config!.MinPlayers));
       return;

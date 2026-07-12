@@ -51,6 +51,7 @@ public class RtvConfig : ICommandConfig, IVoteConfig, IEndOfMapConfig {
   public bool EnabledInWarmup { get; set; } = true;
   public int MinPlayers { get; set; } = 0;
   public int MinRounds { get; set; } = 0;
+  public int SeedingPlayerCount { get; set; } = 2;
   public bool HideHudAfterVote { get; set; } = false;
   public int MapsToShow { get; set; } = 6;
   public int VoteDuration { get; set; } = 30;
