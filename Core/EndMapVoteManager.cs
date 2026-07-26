@@ -69,7 +69,7 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
     plugin.RegisterListener<OnTick>(VoteDisplayTick);
     plugin.RegisterEventHandler<CounterStrikeSharp.API.Core.EventRoundStart>(
       (ev, info) => {
-        ReopenVoteMenu();
+        if (_pluginState.EofVoteHappening) new Timer(1.0F, ReopenVoteMenu);
         return HookResult.Continue;
       });
   }
@@ -89,7 +89,7 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
 
     foreach (var player in ServerManager.ValidPlayers()
      .Where(x => !_playersVoted.Contains(x.UserId!.Value)))
-      MenuManager.OpenChatMenu(player, _voteMenu);
+      MenuManager.GetActiveMenus()[player.Handle] = new ChatMenuInstance(player, _voteMenu);
   }
 
   public void MapVoted(CCSPlayerController player, string mapName) {
