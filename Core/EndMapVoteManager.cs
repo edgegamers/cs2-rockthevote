@@ -69,7 +69,7 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
     plugin.RegisterListener<OnTick>(VoteDisplayTick);
     plugin.RegisterEventHandler<CounterStrikeSharp.API.Core.EventRoundStart>(
       (ev, info) => {
-        ReopenVoteMenu();
+        new Timer(1.0F, ReopenVoteMenu);
         return HookResult.Continue;
       });
   }
