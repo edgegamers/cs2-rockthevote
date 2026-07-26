@@ -39,6 +39,8 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
   private readonly TimeLimitManager _timeLimitManager;
 
   private readonly HashSet<int> _voted = new();
+  private readonly HashSet<int> _playersVoted = new();
+  private ChatMenu? _voteMenu;
 
   private List<string> mapsEllected = new();
   private int timeLeft = -1;
@@ -65,6 +67,11 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
   public void OnLoad(Plugin plugin) {
     _plugin = plugin;
     plugin.RegisterListener<OnTick>(VoteDisplayTick);
+    plugin.RegisterEventHandler<CounterStrikeSharp.API.Core.EventRoundStart>(
+      (ev, info) => {
+        if (_pluginState.EofVoteHappening) new Timer(1.0F, ReopenVoteMenu);
+        return HookResult.Continue;
+      });
   }
 
   public void OnMapStart(string map) {
@@ -73,10 +80,21 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
     mapsEllected.Clear();
     KillTimer();
     _extendUsed = false;
+    _voteMenu = null;
+    _playersVoted.Clear();
+  }
+
+  private void ReopenVoteMenu() {
+    if (!_pluginState.EofVoteHappening || _voteMenu is null) return;
+
+    foreach (var player in ServerManager.ValidPlayers()
+     .Where(x => !_playersVoted.Contains(x.UserId!.Value)))
+      MenuManager.GetActiveMenus()[player.Handle] = new ChatMenuInstance(player, _voteMenu);
   }
 
   public void MapVoted(CCSPlayerController player, string mapName) {
     if (_config!.HideHudAfterVote) _voted.Add(player.UserId!.Value);
+    _playersVoted.Add(player.UserId!.Value);
 
     Votes[mapName] += 1;
     player.PrintToChat(_localizer.LocalizeWithPrefix("emv.you-voted", mapName));
@@ -85,6 +103,7 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
 
   private void ExtendVoted(CCSPlayerController player, string label, int minutes) {
     if (_config!.HideHudAfterVote) _voted.Add(player.UserId!.Value);
+    _playersVoted.Add(player.UserId!.Value);
     Votes[label] += 1;
     player.PrintToChat(_localizer.LocalizeWithPrefix("emv.you-voted-extend"));
     if (Votes.Select(x => x.Value).Sum() >= _canVote) EndVote();
@@ -154,12 +173,14 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
           _pluginState.MapChangeScheduled = false;
 
           KillTimer();
+          _voteMenu = null;
 
           return;
     }
 
     KillTimer();
-    
+    _voteMenu = null;
+
     if (maxVotes > 0)
       Server.PrintToChatAll(_localizer.LocalizeWithPrefix("emv.vote-ended",
         winner.Key, percent, totalVotes));
@@ -194,6 +215,7 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
   public void StartVote(IEndOfMapConfig config, bool rtvTriggered = false) {
     Votes.Clear();
     _voted.Clear();
+    _playersVoted.Clear();
 
     _pluginState.EofVoteHappening = true;
     _config                       = config;
@@ -239,6 +261,8 @@ public class EndMapVoteManager : IPluginDependency<Plugin, Config> {
         MenuManager.CloseActiveMenu(player);
       });
     }
+
+    _voteMenu = menu;
 
     foreach (var player in ServerManager.ValidPlayers())
       MenuManager.OpenChatMenu(player, menu);
